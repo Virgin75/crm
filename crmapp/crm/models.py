@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 CLIENT_TYPES = [
-    ('lead', 'Lead'),
-    ('customer', 'Customer')
+    (0, 'Lead'),
+    (1, 'Customer')
 ]
 
 
@@ -14,9 +14,8 @@ class Clients(models.Model):
     email = models.EmailField(max_length=200)
     phone = models.IntegerField()
     mobile = models.IntegerField()
-    client_type = models.CharField(max_length=10,
-                                   choices=CLIENT_TYPES,
-                                   default='lead')
+    client_type = models.PositiveSmallIntegerField(choices=CLIENT_TYPES,
+                                                   default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     sales_contact = models.ForeignKey(User, on_delete=models.CASCADE)

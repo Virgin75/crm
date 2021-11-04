@@ -7,7 +7,7 @@ CLIENT_TYPES = [
 ]
 
 
-class Clients(models.Model):
+class Client(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     company_name = models.CharField(max_length=100)
@@ -31,9 +31,9 @@ class EventStatus(models.Model):
         return f'{self.status_name}'
 
 
-class Events(models.Model):
+class Event(models.Model):
     name = models.CharField(max_length=100)
-    client = models.ForeignKey(Clients, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
     date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -53,8 +53,8 @@ class ContractStatus(models.Model):
         return f'{self.status_name}'
 
 
-class Contracts(models.Model):
-    client = models.ForeignKey(Clients, on_delete=models.CASCADE)
+class Contract(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
     payment_due_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

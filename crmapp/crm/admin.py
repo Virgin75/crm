@@ -1,10 +1,10 @@
 from django.contrib import admin
-from crm.models import ContractStatus, Contracts, EventStatus, Events, Clients
+from crm.models import ContractStatus, Contract, EventStatus, Event, Client
 
 # Register your models here.
 
-admin.site.register(Contracts)
+admin.site.register(Contract)
 admin.site.register(ContractStatus)
-admin.site.register(Events)
+admin.site.register(Event)
 admin.site.register(EventStatus)
-admin.site.register(Clients)
+admin.site.register(Client)

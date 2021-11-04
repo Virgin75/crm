@@ -20,12 +20,19 @@ class Clients(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     sales_contact = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name} - {self.client_type}'
+
 
 class EventStatus(models.Model):
     status_name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return f'{self.status_name}'
+
 
 class Events(models.Model):
+    name = models.CharField(max_length=100)
     client = models.ForeignKey(Clients, on_delete=models.CASCADE)
     date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,9 +42,15 @@ class Events(models.Model):
     attendees = models.IntegerField()
     notes = models.TextField()
 
+    def __str__(self):
+        return f'{self.name}, le {self.date}'
+
 
 class ContractStatus(models.Model):
     status_name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f'{self.status_name}'
 
 
 class Contracts(models.Model):
@@ -48,3 +61,6 @@ class Contracts(models.Model):
     amount = models.FloatField()
     status = models.ForeignKey(ContractStatus, on_delete=models.CASCADE)
     sales_contact = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'Contrat de {self.amount} € du client {self.client}'

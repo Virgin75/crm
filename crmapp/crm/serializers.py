@@ -10,6 +10,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ClientSerializer(serializers.ModelSerializer):
+    sales_contact = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+    )
+
     class Meta:
         model = Client
         fields = ['first_name', 'last_name', 'company_name', 'email',

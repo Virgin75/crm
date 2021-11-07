@@ -14,14 +14,13 @@ class CreateClient(CreateAPIView):
     permission_classes = (IsSalesUser | IsAdminUser,)
     serializer_class = ClientSerializer
 
-    def create(self, validated_data):
-        validated_data['sales_contact'] = self.request.user
-        return super(CreateClient, self).create(validated_data)
+    def perform_create(self, serializer):
+        serializer.save(sales_contact=self.request.user)
 
 
 class ClientDetail(APIView):
     """
-    Retrieve, update or delete a client instance.
+    Retrieve, update a client instance.
     """
 
     def get_object(self, pk):

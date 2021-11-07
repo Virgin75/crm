@@ -3,14 +3,14 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAdminUser
 from .models import Client
 from .serializers import ClientSerializer
-from .permissions import IsSalesUser
+from .permissions import IsSalesUser, IsClientOwner
 
 
-class CreateClient(ListCreateAPIView):
+class ListCreateClient(ListCreateAPIView):
     permission_classes = (IsSalesUser | IsAdminUser,)
     serializer_class = ClientSerializer
 
@@ -23,26 +23,12 @@ class CreateClient(ListCreateAPIView):
         serializer.save(sales_contact=self.request.user)
 
 
-class ClientDetail(APIView):
+class ClientDetail(RetrieveUpdateAPIView):
     """
-    Retrieve, update a client instance.
+    Retrieve or update a client instance.
     """
-
-    def get_object(self, pk):
-        try:
-            return Client.objects.get(pk=pk)
-        except Client.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        client = self.get_object(pk)
-        serializer = ClientSerializer(client)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        client = self.get_object(pk)
-        serializer = ClientSerializer(client, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    lookup_field = 'id'
+    lookup_url_kwarg = 'pk'
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    permission_classes = (IsSalesUser, IsClientOwner, )

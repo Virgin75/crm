@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.models.query import QuerySet
-from .models import Client, Contract, ContractStatus
+from .models import Client, Contract, ContractStatus, Event, EventStatus
 from rest_framework import serializers
 
 
@@ -36,3 +36,16 @@ class ContractSerializer(serializers.ModelSerializer):
         model = Contract
         fields = ['payment_due_at', 'amount', 'status', 'client',
                   'sales_contact', 'created_at', 'updated_at']
+
+
+class EventSerializer(serializers.ModelSerializer):
+
+    updated_at = serializers.ReadOnlyField()
+    created_at = serializers.ReadOnlyField()
+    client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+    status = serializers.PrimaryKeyRelatedField(queryset=EventStatus.objects.all())
+    support_contact = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
+
+    class Meta:
+        model = Event
+        fields = '__all__'

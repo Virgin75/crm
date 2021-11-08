@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAdminUser
-from .models import Client, Contract
-from .serializers import ClientSerializer, ContractSerializer
+from .models import Client, Contract, Event
+from .serializers import ClientSerializer, ContractSerializer, EventSerializer
 from .permissions import IsSalesUser, IsClientOwner
 
 
@@ -57,3 +57,19 @@ class ContractDetail(RetrieveUpdateAPIView):
     queryset = Contract.objects.all()
     serializer_class = ContractSerializer
     permission_classes = (IsSalesUser, IsClientOwner, )
+
+
+class ListCreateEvent(ListCreateAPIView):
+    serializer_class = EventSerializer
+
+    def get_queryset(self):
+        '''Get only the list of contracts of the user's clients.'''
+        return Event.objects.all()
+
+    def perform_create(self, serializer):
+        if self.request.user.groups.filter(id=1):  # sales user
+            serializer.save()
+        else:
+            # Display an error
+            print('staff user')
+            return

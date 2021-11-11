@@ -8,4 +8,5 @@ urlpatterns = [
     path('contracts', ListCreateContract.as_view()),
     path('contracts/<int:pk>', ContractDetail.as_view()),
     path('events', ListCreateEvent.as_view()),
+    path('events/<int:pk>', ContractDetail.as_view()),
 ]

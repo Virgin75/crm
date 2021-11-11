@@ -7,7 +7,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAdminUser
 from .models import Client, Contract, Event
 from .serializers import ClientSerializer, ContractSerializer, EventSerializer
-from .permissions import IsSalesUser, IsClientOwner, SalesCanCreateSupportCanList
+from .permissions import IsSalesUser, IsClientOwner, SalesCanCreateSupportCanList, IsSupportUser
 
 
 class ListCreateClient(ListCreateAPIView):
@@ -62,10 +62,18 @@ class ContractDetail(RetrieveUpdateAPIView):
 class ListCreateEvent(ListCreateAPIView):
     serializer_class = EventSerializer
     permission_classes = (SalesCanCreateSupportCanList, )
-    # Permissions à ajouter
-    # - Sales : seulement créer l'event
-    # - Support : lister (puis modifier) les events qui leurs sont attribués
 
     def get_queryset(self):
         '''Get only the list of events attributed to the support user.'''
         return Event.objects.filter(support_contact=self.request.user)
+
+
+class EventDetail(RetrieveUpdateAPIView):
+    """
+    Retrieve or update an event instance.
+    """
+    lookup_field = 'id'
+    lookup_url_kwarg = 'pk'
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = (IsSupportUser, )

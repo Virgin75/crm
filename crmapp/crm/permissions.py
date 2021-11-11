@@ -22,3 +22,15 @@ class IsClientOwner(BasePermission):
             if obj.client.sales_contact == request.user:
                 return True
             return False
+
+
+class SalesCanCreateSupportCanList(BasePermission):
+    # Allows access only to sales group members.
+    def has_permission(self, request, view):
+        # Sales user with POST request
+        if request.user.groups.filter(id=1) and request.method == 'POST':
+            return True
+        # Support user with GET request
+        if request.user.groups.filter(id=2) and request.method == 'GET':
+            return True
+        return False

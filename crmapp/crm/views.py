@@ -67,13 +67,5 @@ class ListCreateEvent(ListCreateAPIView):
     # - Support : lister (puis modifier) les events qui leurs sont attribués
 
     def get_queryset(self):
-        '''Get only the list of contracts of the user's clients.'''
-        return Event.objects.all()
-
-    def perform_create(self, serializer):
-        if self.request.user.groups.filter(id=1):  # sales user
-            serializer.save()
-        else:
-            # Display an error
-            print('staff user')
-            return
+        '''Get only the list of events attributed to the support user.'''
+        return Event.objects.filter(support_contact=self.request.user)

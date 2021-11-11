@@ -7,7 +7,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAdminUser
 from .models import Client, Contract, Event
 from .serializers import ClientSerializer, ContractSerializer, EventSerializer
-from .permissions import IsSalesUser, IsClientOwner, SalesCanCreateSupportCanList, IsSupportUser
+from .permissions import IsSalesUser, IsClientOwner, SalesCanCreateSupportCanList, IsSupportUser, IsEventOwner
 
 
 class ListCreateClient(ListCreateAPIView):
@@ -76,4 +76,4 @@ class EventDetail(RetrieveUpdateAPIView):
     lookup_url_kwarg = 'pk'
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    permission_classes = (IsSupportUser, )
+    permission_classes = (IsSupportUser, IsEventOwner)

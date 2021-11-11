@@ -11,9 +11,17 @@ class IsSalesUser(BasePermission):
 
 
 class IsSupportUser(BasePermission):
-    # Allows access only to sales group members.
+    # Allows access only to support group members.
     def has_permission(self, request, view):
         if request.user and request.user.groups.filter(id=2):
+            return True
+        return False
+
+
+class IsEventOwner(BasePermission):
+    # Allows only support users marked as support_contact of the event to access it
+    def has_object_permission(self, request, view, obj):
+        if obj.support_contact == request.user:
             return True
         return False
 

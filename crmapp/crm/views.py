@@ -17,7 +17,16 @@ class ListCreateClient(ListCreateAPIView):
     def get_queryset(self):
         '''Get only the list of clients of the user.'''
         user = self.request.user
-        return Client.objects.filter(sales_contact=user)
+        queryset = Client.objects.filter(sales_contact=user)
+        name = self.request.query_params.get('name')
+        email = self.request.query_params.get('email')
+
+        if name is not None:
+            queryset = queryset.filter(last_name__contains=name)
+        if email is not None:
+            queryset = queryset.filter(email__contains=email)
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(sales_contact=self.request.user)

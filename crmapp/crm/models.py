@@ -18,7 +18,9 @@ class Client(models.Model):
                                                    default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    sales_contact = models.ForeignKey(User, on_delete=models.CASCADE)
+    sales_contact = models.ForeignKey(User,
+                                      limit_choices_to={'groups__name': "Sales"},
+                                      on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} - {self.client_type}'
@@ -38,7 +40,11 @@ class Event(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.ForeignKey(EventStatus, on_delete=models.CASCADE)
-    support_contact = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    support_contact = models.ForeignKey(User,
+                                        on_delete=models.CASCADE,
+                                        limit_choices_to={'groups__name': "Support"},
+                                        blank=True,
+                                        null=True)
     attendees = models.IntegerField()
     notes = models.TextField()
 
@@ -60,7 +66,9 @@ class Contract(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     amount = models.FloatField()
     status = models.ForeignKey(ContractStatus, on_delete=models.CASCADE)
-    sales_contact = models.ForeignKey(User, on_delete=models.CASCADE)
+    sales_contact = models.ForeignKey(User,
+                                      limit_choices_to={'groups__name': "Sales"},
+                                      on_delete=models.CASCADE)
 
     def __str__(self):
         return f'Contrat de {self.amount} € du client {self.client}'

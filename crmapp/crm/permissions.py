@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from .models import Client, Contract
+from .models import Client, Contract, Event
 
 
 class IsSalesUser(BasePermission):
@@ -38,6 +38,22 @@ class IsClientOwner(BasePermission):
             if obj.client.sales_contact == request.user:
                 return True
             return False
+
+
+class IsOwner(BasePermission):
+    # Allow only sales or support users in relation with a client to access it
+    def has_object_permission(self, request, view, obj):
+        # Sales user
+        if request.user.groups.filter(id=1):
+            if obj.sales_contact == request.user:
+                return True
+        # Support user
+        if request.user.groups.filter(id=2):
+            events_of_client = Event.objects.filter(client=obj)
+            for event in events_of_client:
+                if event.support_contact == request.user:
+                    return True
+        return False
 
 
 class SalesCanCreateSupportCanList(BasePermission):

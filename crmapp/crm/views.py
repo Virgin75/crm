@@ -60,12 +60,8 @@ class ListCreateContract(ListCreateAPIView):
         amount_min = self.request.query_params.get('amount_min')
         amount_max = self.request.query_params.get('amount_max')
         # Expected date format in query params : 2021-12-31
-        date_min = datetime.strptime(
-            self.request.query_params.get('date_min'), '%Y-%m-%d'
-        )
-        date_max = datetime.strptime(
-            self.request.query_params.get('date_max'), '%Y-%m-%d'
-        )
+        date_min = self.request.query_params.get('date_min')
+        date_max = self.request.query_params.get('date_max')
 
         if client_name is not None:
             name_filter = Client.objects.filter(last_name__icontains=client_name)
@@ -77,8 +73,11 @@ class ListCreateContract(ListCreateAPIView):
             queryset = queryset.filter(amount__gte=amount_min)
         if amount_max is not None:
             queryset = queryset.filter(amount__lte=amount_max)
+        # TODO: erreurs à gérer quand la date n'est pas au bon format
         if date_min is not None and date_max is not None:
-            queryset = queryset.filter(created_at__range=(date_min, date_max))
+            start_date = datetime.strptime(date_min, '%Y-%m-%d')
+            end_date = datetime.strptime(date_max, '%Y-%m-%d')
+            queryset = queryset.filter(created_at__range=(start_date, end_date))
 
         return queryset
 
@@ -108,12 +107,8 @@ class ListCreateEvent(ListCreateAPIView):
         client_name = self.request.query_params.get('client_name')
         client_email = self.request.query_params.get('client_email')
         # Expected date format in query params : 2021-12-31
-        date_min = datetime.strptime(
-            self.request.query_params.get('date_min'), '%Y-%m-%d'
-        )
-        date_max = datetime.strptime(
-            self.request.query_params.get('date_max'), '%Y-%m-%d'
-        )
+        date_min = self.request.query_params.get('date_min')
+        date_max = self.request.query_params.get('date_max')
 
         if client_name is not None:
             name_filter = Client.objects.filter(last_name__icontains=client_name)
@@ -121,8 +116,11 @@ class ListCreateEvent(ListCreateAPIView):
         if client_email is not None:
             email_filter = Client.objects.filter(email__icontains=client_email)
             queryset = queryset.filter(client__in=email_filter)
+            # TODO: erreurs à gérer quand la date n'est pas au bon format
         if date_min is not None and date_max is not None:
-            queryset = queryset.filter(date__range=(date_min, date_max))
+            start_date = datetime.strptime(date_min, '%Y-%m-%d')
+            end_date = datetime.strptime(date_max, '%Y-%m-%d')
+            queryset = queryset.filter(date__range=(start_date, end_date))
 
         return queryset
 

@@ -19,6 +19,7 @@ class ListCreateClient(ListCreateAPIView):
         '''Get only the list of clients of the user.'''
         user = self.request.user
         queryset = Client.objects.filter(sales_contact=user)
+
         name = self.request.query_params.get('name')
         email = self.request.query_params.get('email')
 
@@ -51,6 +52,9 @@ class ListCreateContract(ListCreateAPIView):
     def get_queryset(self):
         '''Get only the list of contracts of the user's clients.'''
         user = self.request.user
+        client_list = Client.objects.filter(sales_contact=user)
+        queryset = Contract.objects.filter(client__in=client_list)
+
         client_name = self.request.query_params.get('client_name')
         client_email = self.request.query_params.get('client_email')
         amount_min = self.request.query_params.get('amount_min')
@@ -62,9 +66,6 @@ class ListCreateContract(ListCreateAPIView):
         date_max = datetime.strptime(
             self.request.query_params.get('date_max'), '%Y-%m-%d'
         )
-
-        client_list = Client.objects.filter(sales_contact=user)
-        queryset = Contract.objects.filter(client__in=client_list)
 
         if client_name is not None:
             name_filter = Client.objects.filter(last_name__icontains=client_name)
@@ -102,7 +103,28 @@ class ListCreateEvent(ListCreateAPIView):
 
     def get_queryset(self):
         '''Get only the list of events attributed to the support user.'''
-        return Event.objects.filter(support_contact=self.request.user)
+        queryset = Event.objects.filter(support_contact=self.request.user)
+
+        client_name = self.request.query_params.get('client_name')
+        client_email = self.request.query_params.get('client_email')
+        # Expected date format in query params : 2021-12-31
+        date_min = datetime.strptime(
+            self.request.query_params.get('date_min'), '%Y-%m-%d'
+        )
+        date_max = datetime.strptime(
+            self.request.query_params.get('date_max'), '%Y-%m-%d'
+        )
+
+        if client_name is not None:
+            name_filter = Client.objects.filter(last_name__icontains=client_name)
+            queryset = queryset.filter(client__in=name_filter)
+        if client_email is not None:
+            email_filter = Client.objects.filter(email__icontains=client_email)
+            queryset = queryset.filter(client__in=email_filter)
+        if date_min is not None and date_max is not None:
+            queryset = queryset.filter(date__range=(date_min, date_max))
+
+        return queryset
 
 
 class EventDetail(RetrieveUpdateAPIView):

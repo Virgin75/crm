@@ -5,10 +5,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAdminUser
+
 from datetime import datetime
 from .models import Client, Contract, Event
 from .serializers import ClientSerializer, ContractSerializer, EventSerializer
 from .permissions import IsSalesUser, IsClientOwner, SalesCanCreateSupportCanList, IsSupportUser, IsEventOwner, IsOwner
+from .exceptions import WrongDateFormat
 
 
 class ListCreateClient(ListCreateAPIView):
@@ -73,11 +75,13 @@ class ListCreateContract(ListCreateAPIView):
             queryset = queryset.filter(amount__gte=amount_min)
         if amount_max is not None:
             queryset = queryset.filter(amount__lte=amount_max)
-        # TODO: erreurs à gérer quand la date n'est pas au bon format
         if date_min is not None and date_max is not None:
-            start_date = datetime.strptime(date_min, '%Y-%m-%d')
-            end_date = datetime.strptime(date_max, '%Y-%m-%d')
-            queryset = queryset.filter(created_at__range=(start_date, end_date))
+            try:
+                start_date = datetime.strptime(date_min, '%Y-%m-%d')
+                end_date = datetime.strptime(date_max, '%Y-%m-%d')
+                queryset = queryset.filter(date__range=(start_date, end_date))
+            except(ValueError):
+                raise WrongDateFormat
 
         return queryset
 
@@ -116,11 +120,13 @@ class ListCreateEvent(ListCreateAPIView):
         if client_email is not None:
             email_filter = Client.objects.filter(email__icontains=client_email)
             queryset = queryset.filter(client__in=email_filter)
-            # TODO: erreurs à gérer quand la date n'est pas au bon format
         if date_min is not None and date_max is not None:
-            start_date = datetime.strptime(date_min, '%Y-%m-%d')
-            end_date = datetime.strptime(date_max, '%Y-%m-%d')
-            queryset = queryset.filter(date__range=(start_date, end_date))
+            try:
+                start_date = datetime.strptime(date_min, '%Y-%m-%d')
+                end_date = datetime.strptime(date_max, '%Y-%m-%d')
+                queryset = queryset.filter(date__range=(start_date, end_date))
+            except(ValueError):
+                raise WrongDateFormat
 
         return queryset
 

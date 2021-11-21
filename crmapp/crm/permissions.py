@@ -1,5 +1,12 @@
 from rest_framework.permissions import BasePermission
+from rest_framework.exceptions import APIException
 from .models import Client, Contract, Event
+
+
+# Returns 404 instead of 403 forbidden for security reasons
+class CustomForbidden(APIException):
+    status_code = 404
+    default_detail = "Page not found."
 
 
 class IsSalesUser(BasePermission):
@@ -7,7 +14,7 @@ class IsSalesUser(BasePermission):
     def has_permission(self, request, view):
         if request.user and request.user.groups.filter(id=1):
             return True
-        return False
+        raise CustomForbidden
 
 
 class IsSupportUser(BasePermission):
@@ -15,7 +22,7 @@ class IsSupportUser(BasePermission):
     def has_permission(self, request, view):
         if request.user and request.user.groups.filter(id=2):
             return True
-        return False
+        raise CustomForbidden
 
 
 class IsEventOwner(BasePermission):
@@ -23,7 +30,7 @@ class IsEventOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
         if obj.support_contact == request.user:
             return True
-        return False
+        raise CustomForbidden
 
 
 class IsClientOwner(BasePermission):
@@ -32,12 +39,12 @@ class IsClientOwner(BasePermission):
         if isinstance(obj, Client):
             if obj.sales_contact == request.user:
                 return True
-            return False
+            raise CustomForbidden
         elif isinstance(obj, Contract):
             print(obj.client.sales_contact)
             if obj.client.sales_contact == request.user:
                 return True
-            return False
+            raise CustomForbidden
 
 
 class IsOwner(BasePermission):
@@ -53,7 +60,7 @@ class IsOwner(BasePermission):
             for event in events_of_client:
                 if event.support_contact == request.user:
                     return True
-        return False
+        raise CustomForbidden
 
 
 class SalesCanCreateSupportCanList(BasePermission):
@@ -65,4 +72,4 @@ class SalesCanCreateSupportCanList(BasePermission):
         # Support user with GET request
         if request.user.groups.filter(id=2) and request.method == 'GET':
             return True
-        return False
+        raise CustomForbidden

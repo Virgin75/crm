@@ -14,7 +14,7 @@ from .exceptions import WrongDateFormat
 
 
 class ListCreateClient(ListCreateAPIView):
-    permission_classes = (IsSalesUser | IsAdminUser,)
+    permission_classes = (IsSalesUser,)
     serializer_class = ClientSerializer
 
     def get_queryset(self):
@@ -95,9 +95,11 @@ class ContractDetail(RetrieveUpdateAPIView):
     """
     lookup_field = 'id'
     lookup_url_kwarg = 'pk'
-    queryset = Contract.objects.all()
     serializer_class = ContractSerializer
     permission_classes = (IsSalesUser, IsClientOwner, )
+
+    def get_queryset(self):
+        return Contract.objects.filter(id=self.kwargs['pk'])
 
 
 class ListCreateEvent(ListCreateAPIView):

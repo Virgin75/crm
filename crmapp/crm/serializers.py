@@ -29,13 +29,14 @@ class ContractSerializer(serializers.ModelSerializer):
     client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
     sales_contact = serializers.PrimaryKeyRelatedField(read_only=True)
     status = serializers.PrimaryKeyRelatedField(queryset=ContractStatus.objects.all())
+    event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
     updated_at = serializers.ReadOnlyField()
     created_at = serializers.ReadOnlyField()
 
     class Meta:
         model = Contract
         fields = ['payment_due_at', 'amount', 'status', 'client',
-                  'sales_contact', 'created_at', 'updated_at']
+                  'sales_contact', 'event', 'created_at', 'updated_at']
 
 
 class EventSerializer(serializers.ModelSerializer):

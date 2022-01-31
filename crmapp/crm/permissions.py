@@ -13,6 +13,7 @@ class IsSalesUser(BasePermission):
     # Allows access only to sales group members.
     def has_permission(self, request, view):
         if request.user and request.user.groups.filter(id=1):
+            print('is sales')
             return True
         raise CustomForbidden
 
@@ -36,7 +37,9 @@ class IsEventOwner(BasePermission):
 class IsClientOwner(BasePermission):
     # Allow only sales' owner of the client to perform an action on client
     def has_object_permission(self, request, view, obj):
+        print('aaaz')
         if isinstance(obj, Client):
+            print('aa')
             if obj.sales_contact == request.user:
                 return True
             raise CustomForbidden

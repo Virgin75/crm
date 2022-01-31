@@ -69,6 +69,7 @@ class Contract(models.Model):
     sales_contact = models.ForeignKey(User,
                                       limit_choices_to={'groups__name': "Sales"},
                                       on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f'Contrat de {self.amount} € du client {self.client}'

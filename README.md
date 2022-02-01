@@ -21,7 +21,7 @@ sudo -i -u postgres
 ```
 Vous devriez voir apparaitre la commande suivante à l'écran : 
 ```bash
-postgres@your-devid-name: $ ...
+postgres@your-device-name: $ ...
 ```
 Il ne vous reste plus qu'à créer la db correspondant au nom dans le fichier .env : (par défaut : proj12oc)
 ```bash

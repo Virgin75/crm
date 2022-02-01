@@ -1,6 +1,6 @@
-#Projet 12 OC
+# Projet 12 OC
 
-##Comment tester le projet ?
+## Comment tester le projet ?
 1. Clonez ce repo en local
 2. Démarrez un environnement virtuel puis installer les dépendances du projet Django
 ```bash

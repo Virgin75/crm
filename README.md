@@ -10,9 +10,10 @@ source env/bin/activate
 
 # Installation des dépendances
 pip install -r requirements.txt
-```bash
-3. Renommez le fichier `edit.env` en `.env` afin que les variables d'environnement soient chargées sur votre machine grâce au module Python Dotenv. Vous pouvez en profiter pour personnaliser le nom de la db, de l'username ou du password postgreSQL à utiliser.
 ```
+
+3. Renommez le fichier `edit.env` en `.env` afin que les variables d'environnement soient chargées sur votre machine grâce au module Python Dotenv. Vous pouvez en profiter pour personnaliser le nom de la db, de l'username ou du password postgreSQL à utiliser.
+
 
 3. Lancez en local Postgresql sur votre machine.
 ```bash
